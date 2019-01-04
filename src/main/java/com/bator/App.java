@@ -19,7 +19,7 @@ public class App {
     }
 
     void start(String[] args) {
-        redditInput.setItemCount(1); //TODO for testing, remove
+        //redditInput.setItemCount(1); //TODO for testing, remove
 
         chunkInserter.insert(redditInput.gather());
     }
