@@ -2,6 +2,7 @@ package com.bator;
 
 import java.net.MalformedURLException;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
 
 import com.bator.db.ChunkInserter;
 import com.bator.input.InputChunk;
@@ -24,16 +25,15 @@ public class AppTest {
     App app = new App();
 
     @Mock
-    RedditInput redditInput;
+    ExecutorService executor;
 
     @Mock
     ChunkInserter chunkInserter;
 
     @Test
-    public void testStart()  {
+    public void testStart() throws InterruptedException {
         app.start(null);
 
-        verify(redditInput).gather();
         verify(chunkInserter).insert(anyListOf(InputChunk.class));
     }
 }

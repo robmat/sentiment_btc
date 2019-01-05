@@ -47,6 +47,10 @@ public class ChunkInserter {
                     log.debug("inserted " + count + "/" + chunks.size());
                 }
             }
+            ResultSet rs = connection.createStatement().executeQuery("SELECT COUNT(*) FROM " + chunksTable);
+            rs.next();
+            log.debug(chunksTable + " rows count " + rs.getInt(1));
+            rs.close();
         } catch (SQLException e) {
             throw new RuntimeException("SQLException", e);
         }
@@ -63,6 +67,7 @@ public class ChunkInserter {
                     "sentiment REAL," +
                     "salience REAL" +
                     ")");
+            statement.executeUpdate("CREATE UNIQUE INDEX IF NOT EXISTS ux_hash_" + chunksTable + " ON " + chunksTable + "(hash)");
         } catch (SQLException e) {
             throw new RuntimeException("SQLException", e);
         }

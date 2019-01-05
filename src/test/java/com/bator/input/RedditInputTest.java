@@ -14,11 +14,12 @@ public class RedditInputTest {
 
     private static final Logger log = getLogger(RedditInputTest.class);
 
-    RedditInput redditInput = new RedditInput();
+    private RedditInput redditInput = new RedditInput();
 
     @Before
     public void setUp() throws Exception {
         redditInput.setItemCount(1);
+        redditInput.setSubredditName("Bitcoin");
     }
 
     @Test
@@ -28,7 +29,7 @@ public class RedditInputTest {
         result.forEach(chunk -> {
             log.debug(chunk);
             assertNotNull(chunk.getUtcPostDate());
-            assertEquals(chunk.getSource(), redditInput.getClass().getSimpleName());
+            assertEquals(chunk.getSource(), redditInput.getClass().getSimpleName() + " Bitcoin");
         });
     }
 }
