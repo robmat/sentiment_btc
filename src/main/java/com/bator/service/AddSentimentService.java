@@ -43,12 +43,14 @@ public class AddSentimentService {
                 }
             }
             rs.close();
+            addSentiment(inputChunks, connection);
 
             executor.shutdown();
             executor.awaitTermination(15, TimeUnit.MINUTES);
 
             connection.close();
         } catch (SQLException e) {
+            log.error("exception", e);
             throw new RuntimeException("SQLException", e);
         }
     }
@@ -68,8 +70,10 @@ public class AddSentimentService {
                         log.warn("sql " + sql);
                     }
                 } catch (IOException e) {
+                    log.error("exception", e);
                     throw new RuntimeException("IOException", e);
                 } catch (SQLException e) {
+                    log.error("exception", e);
                     throw new RuntimeException("SQLException", e);
                 }
             }

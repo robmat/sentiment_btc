@@ -56,6 +56,7 @@ public class RedditInput implements Input {
                 }
                 log.debug("links done " + ++linkCount + "/" + linkList.size() + " for subreddit " + subredditName);
             } catch (MalformedURLException e) {
+                log.error("exception", e);
                 throw new RuntimeException("MalformedURLException", e);
             }
         }

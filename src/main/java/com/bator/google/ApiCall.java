@@ -21,6 +21,7 @@ public class ApiCall<OUT, IN> {
         try (InputStream inputStream = getClass().getResourceAsStream("/private.properties")) {
             properties.load(inputStream);
         } catch (IOException e) {
+            log.error("exception", e);
             throw new RuntimeException("IOException", e);
         }
         inClass = clazz;

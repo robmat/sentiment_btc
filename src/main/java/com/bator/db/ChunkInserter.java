@@ -47,10 +47,11 @@ public class ChunkInserter {
                         statement.setString(4, inputChunk.getSource());
                         statement.executeUpdate();
                         statement.clearParameters();
-                    }
-                    count++;
-                    if (count % 100 == 0) {
-                        log.debug("inserted " + count + "/" + chunks.size());
+
+                        count++;
+                        if (count % 100 == 0) {
+                            log.debug("inserted " + count + "/" + chunks.size());
+                        }
                     }
                 }
                 connection.createStatement().executeUpdate("COMMIT");
@@ -60,6 +61,7 @@ public class ChunkInserter {
             log.debug(chunksTable + " rows count " + rs.getInt(1));
             rs.close();
         } catch (SQLException e) {
+            log.error("exception", e);
             throw new RuntimeException("SQLException", e);
         }
     }
@@ -77,6 +79,7 @@ public class ChunkInserter {
                     ")");
             statement.executeUpdate("CREATE UNIQUE INDEX IF NOT EXISTS ux_hash_" + chunksTable + " ON " + chunksTable + "(hash)");
         } catch (SQLException e) {
+            log.error("exception", e);
             throw new RuntimeException("SQLException", e);
         }
     }
