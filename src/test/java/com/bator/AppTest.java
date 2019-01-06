@@ -7,6 +7,7 @@ import java.util.concurrent.ExecutorService;
 import com.bator.db.ChunkInserter;
 import com.bator.input.InputChunk;
 import com.bator.input.RedditInput;
+import com.bator.service.AddSentimentService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -30,10 +31,14 @@ public class AppTest {
     @Mock
     ChunkInserter chunkInserter;
 
+    @Mock
+    AddSentimentService addSentimentService;
+
     @Test
     public void testStart() throws InterruptedException {
         app.start(null);
 
         verify(chunkInserter).insert(anyListOf(InputChunk.class));
+        verify(addSentimentService).addSentimentToChunksWithout();
     }
 }

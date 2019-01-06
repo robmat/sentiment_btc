@@ -9,8 +9,10 @@ import java.sql.Statement;
 import java.util.List;
 
 import com.bator.input.InputChunk;
+import lombok.Data;
 import org.apache.log4j.Logger;
 
+@Data
 public class ChunkInserter {
 
     private static final Logger log = Logger.getLogger(ChunkInserter.class);
@@ -64,8 +66,8 @@ public class ChunkInserter {
                     "body TEXT," +
                     "source TEXT," +
                     "creationDate DATETIME," +
-                    "sentiment REAL," +
-                    "salience REAL" +
+                    "score REAL," +
+                    "magnitude REAL" +
                     ")");
             statement.executeUpdate("CREATE UNIQUE INDEX IF NOT EXISTS ux_hash_" + chunksTable + " ON " + chunksTable + "(hash)");
         } catch (SQLException e) {
