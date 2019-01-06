@@ -18,7 +18,7 @@ public class App {
 
     private ChunkInserter chunkInserter = new ChunkInserter();
 
-    private ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+    private ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() * 3);
 
     private AddSentimentService addSentimentService = new AddSentimentService();
 

@@ -4,8 +4,10 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.List;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.apache.log4j.Logger;
 
 public class SentimentApi extends ApiCall<SentimentApi.AnalyzeSentimentResponse, SentimentApi.AnalyzeSentimentRequest> {
@@ -34,6 +36,8 @@ public class SentimentApi extends ApiCall<SentimentApi.AnalyzeSentimentResponse,
     }
 
     @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
     @Builder
     public static class AnalyzeSentimentResponse {
         DocumentSentiment documentSentiment;
@@ -42,6 +46,8 @@ public class SentimentApi extends ApiCall<SentimentApi.AnalyzeSentimentResponse,
     }
 
     @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
     @Builder
     public static class DocumentSentiment {
         BigDecimal magnitude;

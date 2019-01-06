@@ -22,7 +22,7 @@ public class AddSentimentService {
 
     private static final Logger log = Logger.getLogger(AddSentimentService.class);
 
-    private ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+    private ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() * 5);
     private SentimentApi sentimentApi = new SentimentApi();
 
     String chunksDb = "chunks";
@@ -42,10 +42,11 @@ public class AddSentimentService {
                     inputChunks = new ArrayList<>();
                 }
             }
+            rs.close();
+
             executor.shutdown();
             executor.awaitTermination(15, TimeUnit.MINUTES);
 
-            rs.close();
             connection.close();
         } catch (SQLException e) {
             throw new RuntimeException("SQLException", e);
@@ -58,9 +59,14 @@ public class AddSentimentService {
             for (InputChunk inputChunk : inputChunks) {
                 try {
                     DocumentSentiment sentiment = sentimentApi.sentiment(inputChunk.getText()).getDocumentSentiment();
-                    int updates = connection.createStatement().executeUpdate("UPDATE " + chunksTable + " SET score = " + sentiment.getScore()
-                            + ", magnitude = " + sentiment.getMagnitude() + " WHERE hash = " + inputChunk.getHashCode());
+                    String sql = "UPDATE " + chunksTable + " SET score = " + sentiment.getScore()
+                            + ", magnitude = " + sentiment.getMagnitude() + " WHERE hash = " + inputChunk.getHashCode();
+                    int updates = connection.createStatement().executeUpdate(sql);
                     log.debug("updated " + (updates == 1) + " " + ++count + "/" + inputChunks.size());
+                    if (updates != 1) {
+                        log.warn("updates " + updates);
+                        log.warn("sql " + sql);
+                    }
                 } catch (IOException e) {
                     throw new RuntimeException("IOException", e);
                 } catch (SQLException e) {

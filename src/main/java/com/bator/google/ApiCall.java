@@ -35,10 +35,10 @@ public class ApiCall<OUT, IN> {
         String json = new ObjectMapper().writeValueAsString(postBody);
         IOUtils.write(json, conn.getOutputStream());
         int response = conn.getResponseCode();
-        log.debug("called " + apiUrl + " with " + postBody + " got " + response);
+        log.trace("called " + apiUrl + " with " + postBody + " got " + response);
         if (response == 200) {
             String resultString = IOUtils.toString(conn.getInputStream());
-            log.debug(resultString);
+            log.trace(resultString);
             return (OUT) new ObjectMapper().readValue(resultString, inClass);
         } else {
             String result = IOUtils.toString(conn.getErrorStream());

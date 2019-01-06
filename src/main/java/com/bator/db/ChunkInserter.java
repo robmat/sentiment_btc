@@ -9,6 +9,7 @@ import java.sql.Statement;
 import java.util.List;
 
 import com.bator.input.InputChunk;
+import com.google.common.collect.Lists;
 import lombok.Data;
 import org.apache.log4j.Logger;
 
@@ -30,24 +31,29 @@ public class ChunkInserter {
         try (Connection connection = DriverManager.getConnection("jdbc:sqlite:" + chunksDb + ".db");
              PreparedStatement statement = connection.prepareStatement("INSERT INTO " + chunksTable + " (hash, body, creationDate, source) " +
                      "VALUES (?,?,?,?) ")) {
-            for (InputChunk inputChunk : chunks) {
-                int hashCode = inputChunk.hashCode();
-                ResultSet resultSet = connection.createStatement().executeQuery("SELECT COUNT(*) FROM " + chunksTable + " WHERE hash = " + hashCode);
-                resultSet.next();
-                int cnt = resultSet.getInt(1);
-                resultSet.close();
-                if (cnt == 0) {
-                    statement.setInt(1, hashCode);
-                    statement.setString(2, inputChunk.getText());
-                    statement.setDate(3, new java.sql.Date(inputChunk.getUtcPostDate().getTime()));
-                    statement.setString(4, inputChunk.getSource());
-                    statement.executeUpdate();
-                    statement.clearParameters();
+            List<List<InputChunk>> chunksParts = Lists.partition(chunks, 1000);
+            for (List<InputChunk> chunksPart : chunksParts) {
+                connection.createStatement().executeUpdate("BEGIN");
+                for (InputChunk inputChunk : chunksPart) {
+                    int hashCode = inputChunk.hashCode();
+                    ResultSet resultSet = connection.createStatement().executeQuery("SELECT COUNT(*) FROM " + chunksTable + " WHERE hash = " + hashCode);
+                    resultSet.next();
+                    int cnt = resultSet.getInt(1);
+                    resultSet.close();
+                    if (cnt == 0) {
+                        statement.setInt(1, hashCode);
+                        statement.setString(2, inputChunk.getText());
+                        statement.setDate(3, new java.sql.Date(inputChunk.getUtcPostDate().getTime()));
+                        statement.setString(4, inputChunk.getSource());
+                        statement.executeUpdate();
+                        statement.clearParameters();
+                    }
+                    count++;
+                    if (count % 100 == 0) {
+                        log.debug("inserted " + count + "/" + chunks.size());
+                    }
                 }
-                count++;
-                if (count % 100 == 0) {
-                    log.debug("inserted " + count + "/" + chunks.size());
-                }
+                connection.createStatement().executeUpdate("COMMIT");
             }
             ResultSet rs = connection.createStatement().executeQuery("SELECT COUNT(*) FROM " + chunksTable);
             rs.next();
