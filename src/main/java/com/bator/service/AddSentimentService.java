@@ -57,6 +57,7 @@ public class AddSentimentService {
 
     private void addSentiment(List<InputChunk> inputChunks, Connection connection) {
         Runnable runnable = () -> {
+          try {
             int count = 0;
             for (InputChunk inputChunk : inputChunks) {
                 try {
@@ -77,6 +78,10 @@ public class AddSentimentService {
                     throw new RuntimeException("SQLException", e);
                 }
             }
+          } catch (Exception e) {
+            log.error("exception", e);
+            throw new RuntimeException("Exception", e);
+          }
         };
         executor.submit(runnable);
     }
