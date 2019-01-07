@@ -22,7 +22,7 @@ public class AddSentimentService {
 
     private static final Logger log = Logger.getLogger(AddSentimentService.class);
 
-    private ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() * 5);
+    private ExecutorService executor = Executors.newFixedThreadPool(4);
     private SentimentApi sentimentApi = new SentimentApi();
 
     String chunksDb = "chunks";
