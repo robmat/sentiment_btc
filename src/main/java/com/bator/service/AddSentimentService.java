@@ -58,25 +58,30 @@ public class AddSentimentService {
     private void addSentiment(List<InputChunk> inputChunks, Connection connection) {
         Runnable runnable = () -> {
           try {
-            int count = 0;
-            for (InputChunk inputChunk : inputChunks) {
-                try {
-                    DocumentSentiment sentiment = sentimentApi.sentiment(inputChunk.getText()).getDocumentSentiment();
-                    String sql = "UPDATE " + chunksTable + " SET score = " + sentiment.getScore()
-                            + ", magnitude = " + sentiment.getMagnitude() + " WHERE hash = " + inputChunk.getHashCode();
-                    int updates = connection.createStatement().executeUpdate(sql);
-                    log.debug("updated " + (updates == 1) + " " + ++count + "/" + inputChunks.size());
-                    if (updates != 1) {
-                        log.warn("updates " + updates);
-                        log.warn("sql " + sql);
+            try {
+                int count = 0;
+                for (InputChunk inputChunk : inputChunks) {
+                    try {
+                        DocumentSentiment sentiment = sentimentApi.sentiment(inputChunk.getText()).getDocumentSentiment();
+                        String sql = "UPDATE " + chunksTable + " SET score = " + sentiment.getScore()
+                                + ", magnitude = " + sentiment.getMagnitude() + " WHERE hash = " + inputChunk.getHashCode();
+                        int updates = connection.createStatement().executeUpdate(sql);
+                        log.debug("updated " + (updates == 1) + " " + ++count + "/" + inputChunks.size());
+                        if (updates != 1) {
+                            log.warn("updates " + updates);
+                            log.warn("sql " + sql);
+                        }
+                    } catch (IOException e) {
+                        log.error("exception", e);
+                        throw new RuntimeException("IOException", e);
+                    } catch (SQLException e) {
+                        log.error("exception", e);
+                        throw new RuntimeException("SQLException", e);
                     }
-                } catch (IOException e) {
-                    log.error("exception", e);
-                    throw new RuntimeException("IOException", e);
-                } catch (SQLException e) {
-                    log.error("exception", e);
-                    throw new RuntimeException("SQLException", e);
                 }
+            } catch (Exception e) {
+                log.error("exception", e);
+                throw new RuntimeException("Exception", e);
             }
           } catch (Exception e) {
             log.error("exception", e);
