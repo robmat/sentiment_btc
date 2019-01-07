@@ -15,9 +15,12 @@ import lombok.Data;
 @Data
 public class App {
 
+    private static String[] subreddits = {"Bitcoin", "btc", "BitcoinBeginners", "CryptoMarkets",
+        "bitcoin_uncensored", "BitcoinMarkets"};
+
     private ChunkInserter chunkInserter = new ChunkInserter();
 
-    private ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+    private ExecutorService executor = Executors.newFixedThreadPool(subreddits.length);
 
     private AddSentimentService addSentimentService = new AddSentimentService();
 
@@ -27,7 +30,8 @@ public class App {
 
     void start(String[] args) throws InterruptedException {
         List<InputChunk> inputChunks = new ArrayList<>();
-        for (String subredditName : new String[] {"Bitcoin", "btc", "BitcoinBeginners", "CryptoMarkets", "bitcoin_uncensored", "BitcoinMarkets"}) {
+
+        for (String subredditName : subreddits) {
             final RedditInput redditInput = new RedditInput();
             redditInput.setSubredditName(subredditName);
             //redditInput.setItemCount(8); //for testing, remove for real use
