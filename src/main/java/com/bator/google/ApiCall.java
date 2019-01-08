@@ -56,7 +56,7 @@ public class ApiCall<OUT, IN> {
             } catch (InterruptedException e1) {
                 log.error(e1, e1);
             }
-            if (retries >= 0) {
+            if (retries > 0) {
                 return retry(apiUrl, postBody, --retries);
             } else {
                 throw e;

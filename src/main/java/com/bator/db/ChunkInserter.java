@@ -28,6 +28,7 @@ public class ChunkInserter {
 
     private void insertChunks(List<InputChunk> chunks) {
         int count = 0;
+        int countNew = 0;
         try (Connection connection = DriverManager.getConnection("jdbc:sqlite:" + chunksDb + ".db");
              PreparedStatement statement = connection.prepareStatement("INSERT INTO " + chunksTable + " (hash, body, creationDate, source) " +
                      "VALUES (?,?,?,?) ")) {
@@ -48,6 +49,7 @@ public class ChunkInserter {
                         statement.executeUpdate();
                         statement.clearParameters();
 
+                        countNew++;
                         count++;
                         if (count % 100 == 0) {
                             log.debug("inserted " + count + "/" + chunks.size());
@@ -60,6 +62,7 @@ public class ChunkInserter {
             rs.next();
             log.debug(chunksTable + " rows count " + rs.getInt(1));
             rs.close();
+            log.debug("new count: " + countNew);
         } catch (SQLException e) {
             log.error("exception", e);
             throw new RuntimeException("SQLException", e);

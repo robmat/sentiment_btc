@@ -34,7 +34,8 @@ public class AddSentimentService {
 
         try {
             Connection connection = DriverManager.getConnection("jdbc:sqlite:" + chunksDb + ".db");
-            ResultSet rs = connection.createStatement().executeQuery("SELECT  hash, body FROM " + chunksTable + " WHERE score IS NULL AND magnitude IS NULL ORDER BY creationDate DESC");
+            ResultSet rs = connection.createStatement().executeQuery("SELECT  hash, body FROM " + chunksTable +
+                " WHERE score IS NULL AND magnitude IS NULL ORDER BY creationDate DESC LIMIT 1");
             while (rs.next()) {
                 inputChunks.add(InputChunk.builder().hashCode(rs.getInt(1)).text(rs.getString(2)).build());
                 if (inputChunks.size() >= batchSize) {
