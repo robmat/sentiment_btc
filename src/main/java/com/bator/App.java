@@ -9,6 +9,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import com.bator.db.ChunkInserter;
+import com.bator.db.DataCutter;
 import com.bator.input.InputChunk;
 import com.bator.input.RedditInput;
 import com.bator.service.AddSentimentService;
@@ -29,6 +30,8 @@ public class App {
 
     private GraphShower graphShower = new GraphShower();
 
+    private DataCutter dataCutter = new DataCutter();
+
     public static void main(String[] args) throws InterruptedException {
        new App().start(args);
     }
@@ -38,6 +41,9 @@ public class App {
             if (Arrays.asList(args).contains("-fillChunks")) {
                 fillInChunks();
             }
+            if (Arrays.asList(args).contains("-cutData")) {
+                cutOfData();
+            }
             if (Arrays.asList(args).contains("-addSentiment")) {
                 addSentimentService.addSentimentToChunksWithout();
             }
@@ -45,6 +51,10 @@ public class App {
                 showGraph();
             }
         }
+    }
+
+    private void cutOfData() {
+        dataCutter.cut();
     }
 
     private void fillInChunks() throws InterruptedException {

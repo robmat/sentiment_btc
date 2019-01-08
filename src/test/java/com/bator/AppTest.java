@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 
 import com.bator.db.ChunkInserter;
+import com.bator.db.DataCutter;
 import com.bator.input.InputChunk;
 import com.bator.input.RedditInput;
 import com.bator.service.AddSentimentService;
@@ -34,11 +35,15 @@ public class AppTest {
     @Mock
     AddSentimentService addSentimentService;
 
+    @Mock
+    DataCutter dataCutter;
+
     @Test
     public void testStart() throws InterruptedException {
-        app.start(new String[] { "-sentiment", /*"-showGraph"*/ });
+        app.start(new String[] { "-fillChunks", "-addSentiment", "-cutData" /*"-showGraph"*/ });
 
         verify(chunkInserter).insert(anyListOf(InputChunk.class));
         verify(addSentimentService).addSentimentToChunksWithout();
+        verify(dataCutter).cut();
     }
 }
