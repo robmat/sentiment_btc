@@ -35,8 +35,11 @@ public class App {
 
     void start(String[] args) throws InterruptedException {
         if (Objects.nonNull(args)) {
-            if (Arrays.asList(args).contains("-sentiment")) {
-                fillInSentiment();
+            if (Arrays.asList(args).contains("-fillChunks")) {
+                fillInChunks();
+            }
+            if (Arrays.asList(args).contains("-addSentiment")) {
+                addSentimentService.addSentimentToChunksWithout();
             }
             if (Arrays.asList(args).contains("-showGraph")) {
                 showGraph();
@@ -44,7 +47,7 @@ public class App {
         }
     }
 
-    private void fillInSentiment() throws InterruptedException {
+    private void fillInChunks() throws InterruptedException {
         List<InputChunk> inputChunks = new ArrayList<>();
 
         for (String subredditName : subreddits) {
@@ -59,7 +62,7 @@ public class App {
         executor.awaitTermination(60, TimeUnit.MINUTES);
         chunkInserter.insert(inputChunks);
 
-        addSentimentService.addSentimentToChunksWithout();
+
     }
 
     private void showGraph() {

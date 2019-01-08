@@ -36,7 +36,7 @@ public class AppTest {
 
     @Test
     public void testStart() throws InterruptedException {
-        app.start(new String[] { "-sentiment", "-showGraph" });
+        app.start(new String[] { "-sentiment", /*"-showGraph"*/ });
 
         verify(chunkInserter).insert(anyListOf(InputChunk.class));
         verify(addSentimentService).addSentimentToChunksWithout();

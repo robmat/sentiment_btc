@@ -66,7 +66,7 @@ public class AddSentimentService {
                         String sql = "UPDATE " + chunksTable + " SET score = " + sentiment.getScore()
                                 + ", magnitude = " + sentiment.getMagnitude() + " WHERE hash = " + inputChunk.getHashCode();
                         int updates = connection.createStatement().executeUpdate(sql);
-                        log.debug("updated " + (updates == 1) + " " + ++count + "/" + inputChunks.size());
+                        log.debug("updated " + (updates == 1) + " " + ++count + "/" + inputChunks.size() + " sentiment " + sentiment.getScore() + " magnitude " + sentiment.getMagnitude());
                         if (updates != 1) {
                             log.warn("updates " + updates);
                             log.warn("sql " + sql);
