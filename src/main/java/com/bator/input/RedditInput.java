@@ -37,10 +37,10 @@ public class RedditInput implements Input {
 
             List<Link> linkList = new ArrayList<>();
 
-            linkList.addAll(subreddit.getTop(itemCount, FromPast.WEEK));
+            linkList.addAll(subreddit.getTop(itemCount));
             linkList.addAll(subreddit.getRising(itemCount));
-            linkList.addAll(subreddit.getNew(itemCount, FromPast.WEEK));
-            linkList.addAll(subreddit.getControversial(itemCount, FromPast.WEEK));
+            linkList.addAll(subreddit.getNew(itemCount));
+            linkList.addAll(subreddit.getControversial(itemCount));
 
             int linkCount = 0;
             for (Link link : linkList) {
