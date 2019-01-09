@@ -8,11 +8,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Date;
 
 import com.bator.input.InputChunk;
-import org.apache.commons.lang3.time.DateUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,7 +20,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import static java.math.BigDecimal.ZERO;
 import static org.apache.commons.lang3.time.DateUtils.addDays;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DataCutterTest {
@@ -63,7 +61,7 @@ public class DataCutterTest {
 
         try (Connection connection = DriverManager.getConnection("jdbc:sqlite:testChunks.db");
              Statement statement = connection.createStatement();
-            ResultSet rs = statement.executeQuery("SELECT COUNT(*) FROM testChunks")) {
+             ResultSet rs = statement.executeQuery("SELECT COUNT(*) FROM testChunks")) {
             rs.next();
             assertEquals(2, rs.getInt(1));
         }

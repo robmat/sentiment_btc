@@ -23,13 +23,11 @@ import org.apache.log4j.Logger;
 public class AddSentimentService {
 
     private static final Logger log = Logger.getLogger(AddSentimentService.class);
-
-    private ExecutorService executor = Executors.newFixedThreadPool(1);
-    private SentimentApi sentimentApi = new SentimentApi();
-
     String chunksDb = "chunks";
     String chunksTable = "chunks";
     int batchSize = 100;
+    private ExecutorService executor = Executors.newFixedThreadPool(1);
+    private SentimentApi sentimentApi = new SentimentApi();
     private int chunksCount;
     private int chunksUpdated;
 
@@ -77,34 +75,29 @@ public class AddSentimentService {
     private void addSentiment(List<InputChunk> inputChunks, Connection connection) {
         Runnable runnable = () -> {
             try {
-                try {
-                    int count = 0;
-                    for (InputChunk inputChunk : inputChunks) {
-                        try {
-                            DocumentSentiment sentiment = sentimentApi.sentiment(inputChunk.getText()).getDocumentSentiment();
-                            String sql = "UPDATE " + chunksTable + " SET score = " + sentiment.getScore()
-                                    + ", magnitude = " + sentiment.getMagnitude() + " WHERE hash = " + inputChunk.getHashCode();
-                            int updates = connection.createStatement().executeUpdate(sql);
-                            log.debug("updated " + (updates == 1) + " " + ++count + "/" + inputChunks.size() +
-                                    " sentiment " + sentiment.getScore() +
-                                    " magnitude " + sentiment.getMagnitude() +
-                                    " date " + inputChunk.getUtcPostDate());
-                            if (updates != 1) {
-                                log.warn("updates " + updates);
-                                log.warn("sql " + sql);
-                            }
-                            log.debug("done " + ++chunksUpdated + "/" + chunksCount);
-                        } catch (IOException e) {
-                            log.error("exception", e);
-                            throw new RuntimeException("IOException", e);
-                        } catch (SQLException e) {
-                            log.error("exception", e);
-                            throw new RuntimeException("SQLException", e);
+                int count = 0;
+                for (InputChunk inputChunk : inputChunks) {
+                    try {
+                        DocumentSentiment sentiment = sentimentApi.sentiment(inputChunk.getText()).getDocumentSentiment();
+                        String sql = "UPDATE " + chunksTable + " SET score = " + sentiment.getScore()
+                                + ", magnitude = " + sentiment.getMagnitude() + " WHERE hash = " + inputChunk.getHashCode();
+                        int updates = connection.createStatement().executeUpdate(sql);
+                        log.debug("updated " + (updates == 1) + " " + ++count + "/" + inputChunks.size() +
+                                " sentiment " + sentiment.getScore() +
+                                " magnitude " + sentiment.getMagnitude() +
+                                " date " + inputChunk.getUtcPostDate());
+                        if (updates != 1) {
+                            log.warn("updates " + updates);
+                            log.warn("sql " + sql);
                         }
+                        log.debug("done " + ++chunksUpdated + "/" + chunksCount);
+                    } catch (IOException e) {
+                        log.error("exception", e);
+                        throw new RuntimeException("IOException", e);
+                    } catch (SQLException e) {
+                        log.error("exception", e);
+                        throw new RuntimeException("SQLException", e);
                     }
-                } catch (Exception e) {
-                    log.error("exception", e);
-                    throw new RuntimeException("Exception", e);
                 }
             } catch (Exception e) {
                 log.error("exception", e);

@@ -3,7 +3,6 @@ package com.bator.google;
 import java.io.IOException;
 
 import com.bator.google.SentimentApi.AnalyzeSentimentResponse;
-import org.junit.Assert;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

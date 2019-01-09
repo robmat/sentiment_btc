@@ -2,13 +2,13 @@ package com.bator.input;
 
 import java.util.List;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apache.log4j.Logger;
 import org.junit.Before;
 import org.junit.Test;
 
 import static org.apache.log4j.Logger.getLogger;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 public class RedditInputTest {
 

@@ -20,7 +20,7 @@ import lombok.Data;
 public class App {
 
     private static String[] subreddits = {"Bitcoin", "btc", "BitcoinBeginners", "CryptoMarkets",
-        "bitcoin_uncensored", "BitcoinMarkets"};
+            "bitcoin_uncensored", "BitcoinMarkets"};
 
     private ChunkInserter chunkInserter = new ChunkInserter();
 
@@ -33,7 +33,7 @@ public class App {
     private DataCutter dataCutter = new DataCutter();
 
     public static void main(String[] args) throws InterruptedException {
-       new App().start(args);
+        new App().start(args);
     }
 
     void start(String[] args) throws InterruptedException {
