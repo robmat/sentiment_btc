@@ -23,10 +23,10 @@ import static java.util.Objects.nonNull;
 
 public class GraphShower extends Application {
 
-    public static final int DAYS_BEFORE = -7;
+    public static final int DAYS_BEFORE = -1;
     public static final String REPORT_SQL =
             "select count(hash) cnt, avg(score) score, avg(magnitude) magnitude, avg(score*magnitude) score_magnitude, "
-                    + "strftime('%Y-%m-%d %H:00', creationDate / 1000, 'unixepoch', 'utc') post_time from chunks "
+                    + "strftime('%Y-%m-%d %H:00', (creationDate / 1000), 'unixepoch', 'utc') post_time from chunks "
                     + "where creationDate > XxXxX "
                     + "group by post_time "
                     + "order by creationDate asc";
@@ -59,7 +59,7 @@ public class GraphShower extends Application {
             //defining the axes
             final CategoryAxis xAxis = new CategoryAxis();
             final NumberAxis yAxis = new NumberAxis();
-            xAxis.setLabel("Fiat.");
+            xAxis.setLabel("Sentiment.");
             //creating the chart
             final LineChart<String, Number> lineChart = new LineChart<>(xAxis, yAxis);
 
@@ -95,13 +95,13 @@ public class GraphShower extends Application {
                 }
             }
 
-            lineChart.getData().add(seriesCnt);
+            //lineChart.getData().add(seriesCnt);
             lineChart.getData().add(seriesScore);
             lineChart.getData().add(seriesScoreMagnitude);
 
             scrollPane.setContent(lineChart);
-            lineChart.setPrefWidth(1820);
-            lineChart.setPrefHeight(1000);
+            lineChart.setPrefWidth(1600);
+            lineChart.setPrefHeight(800);
         }
     }
 }
