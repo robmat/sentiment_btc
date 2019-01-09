@@ -25,6 +25,7 @@ public class DataCutter {
             int deleted = statement.executeUpdate("DELETE FROM " + chunksTable + " WHERE creationDate <= " + cutOffDate.getTime() +
                     " AND score IS NULL AND magnitude IS NULL");
             log.debug("deleted before " + cutOffDate + " count " + deleted);
+            statement.executeUpdate("vacuum");
         } catch (SQLException e) {
             throw new RuntimeException("SQLException", e);
         }
