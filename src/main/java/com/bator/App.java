@@ -13,7 +13,7 @@ import com.bator.db.DataCutter;
 import com.bator.input.InputChunk;
 import com.bator.input.RedditInput;
 import com.bator.service.AddSentimentService;
-import com.bator.ui.GraphShower;
+import com.bator.ui.JavaxGraphShower;
 import lombok.Data;
 
 @Data
@@ -28,7 +28,7 @@ public class App {
 
     private AddSentimentService addSentimentService = new AddSentimentService();
 
-    private GraphShower graphShower = new GraphShower();
+    private JavaxGraphShower javaxGraphShower = new JavaxGraphShower();
 
     private DataCutter dataCutter = new DataCutter();
 
@@ -76,6 +76,6 @@ public class App {
     }
 
     private void showGraph() {
-        graphShower.start();
+        javaxGraphShower.start();
     }
 }

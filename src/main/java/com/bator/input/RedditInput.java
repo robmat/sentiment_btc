@@ -27,10 +27,11 @@ public class RedditInput implements Input {
 
     @Override
     public List<InputChunk> gather(int retryCount) {
+        ArrayList<InputChunk> result = new ArrayList<>();
         try {
             Validate.notNull(subredditName);
 
-            ArrayList<InputChunk> result = new ArrayList<>();
+
             Reddit red = RedditApi.getRedditInstance("sentiment_btc /u/robthebobr");
 
             Subreddit subreddit = red.getSubreddit(subredditName);
@@ -49,9 +50,9 @@ public class RedditInput implements Input {
             }
             return result;
         } catch (Exception e) {
-            log.error("exception", e);
+            log.error(subredditName + " exception, but will return " + result.size() + " results", e);
         }
-        return null;
+        return result;
     }
 
     private void retry(ArrayList<InputChunk> result, Reddit red, Link link, int retryCount) {
@@ -69,10 +70,10 @@ public class RedditInput implements Input {
 
         } catch (Exception e) {
             if (retryCount >= 0) {
-                log.error("stopped trying exception", e);
+                log.error(subredditName + " stopped trying exception", e);
                 throw new RuntimeException("Exception", e);
             } else {
-                log.warn("exception, will retry times " + --retryCount, e);
+                log.warn(subredditName + " exception, will retry times " + --retryCount, e);
                 retry(result, red, link, retryCount);
             }
         }
