@@ -22,19 +22,21 @@ import org.apache.log4j.Logger;
 import static java.util.Objects.nonNull;
 
 public class JavaxGraphShower extends Application {
+    private static final Logger log = Logger.getLogger(JavaxGraphShower.class);
+
     private String chunksDb = "chunks";
     private String chunksTable = "chunks";
 
-    private static final int DAYS_BEFORE = -1;
-    private final String REPORT_SQL =
+    static final int DAYS_BEFORE = -1;
+    static final String REPORT_SQL =
             "select count(  hash) cnt, avg(score) score, avg(magnitude) magnitude, avg(score*magnitude) score_magnitude, "
                     + "strftime('%Y-%m-%d %H:00', (creationDate / 1000), 'unixepoch', 'utc') post_time, "
                     + "strftime('%Y-%m-%d %H:00', (creationDate / 1000), 'unixepoch', 'localtime') post_time_local "
-                    + "from " + chunksTable
+                    + "from YyYyY "
                     + " where creationDate > XxXxX "
                     + "group by post_time "
                     + "order by creationDate asc";
-    private static final Logger log = Logger.getLogger(JavaxGraphShower.class);
+
 
 
     public void start() {
@@ -43,17 +45,9 @@ public class JavaxGraphShower extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-        stage.setTitle("Graph.");
-        final ScrollPane scrollPane = new ScrollPane();
+        final ScrollPane scrollPane = getScrollPane(stage);
 
-        Scene scene = new Scene(scrollPane);
-        stage.setScene(scene);
-        stage.setMaximized(true);
-        stage.show();
-
-        String finalSql = REPORT_SQL
-                .replace("XxXxX", DateUtils.addDays(new Date(), DAYS_BEFORE).getTime() + "");
-        log.debug("finalSql " + finalSql);
+        String finalSql = finalSql(chunksTable);
 
         try (Connection connection = DriverManager.getConnection("jdbc:sqlite:" + chunksDb + ".db");
              Statement statement = connection.createStatement();
@@ -104,5 +98,24 @@ public class JavaxGraphShower extends Application {
             lineChart.setPrefWidth(1600);
             lineChart.setPrefHeight(800);
         }
+    }
+
+    static String finalSql(String chunksTable) {
+        String finalSql = REPORT_SQL
+                .replace("XxXxX", DateUtils.addDays(new Date(), DAYS_BEFORE).getTime() + "")
+                .replace("YyYyY", chunksTable);
+        log.debug("finalSql " + finalSql);
+        return finalSql;
+    }
+
+    static ScrollPane getScrollPane(Stage stage) {
+        stage.setTitle("Graph.");
+        final ScrollPane scrollPane = new ScrollPane();
+
+        Scene scene = new Scene(scrollPane);
+        stage.setScene(scene);
+        stage.setMaximized(true);
+        stage.show();
+        return scrollPane;
     }
 }
