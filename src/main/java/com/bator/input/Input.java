@@ -4,5 +4,5 @@ import java.util.List;
 
 public interface Input {
 
-    List<InputChunk> gather();
+    List<InputChunk> gather(int retryCount);
 }

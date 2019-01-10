@@ -26,7 +26,7 @@ public class RedditInput implements Input {
     String subredditName;
 
     @Override
-    public List<InputChunk> gather() {
+    public List<InputChunk> gather(int retryCount) {
         try {
             Validate.notNull(subredditName);
 
@@ -44,27 +44,37 @@ public class RedditInput implements Input {
 
             int linkCount = 0;
             for (Link link : linkList) {
-                try {
-                    RedditThread redditThread = red.getRedditThread("https://www.reddit.com" + link.getPermalink(), Sorting.NEW);
-                    redditThread.fetchMoreComments(true);
-                    List<Comment> comments = redditThread.getFlatComments();
-                    for (Comment comment : comments) {
-                        result.add(InputChunk.builder()
-                                .text(comment.getBody())
-                                .utcPostDate(new Date(comment.getCreatedUtc() * 1000))
-                                .source(getClass().getSimpleName() + " " + subredditName)
-                                .build());
-                    }
-                    log.debug("links done " + ++linkCount + "/" + linkList.size() + " for subreddit " + subredditName);
-                } catch (MalformedURLException e) {
-                    log.error("exception", e);
-                    throw new RuntimeException("MalformedURLException", e);
-                }
+                retry(result, red, link, retryCount);
+                log.debug("links done " + ++linkCount + "/" + linkList.size() + " for subreddit " + subredditName);
             }
             return result;
         } catch (Exception e) {
             log.error("exception", e);
         }
         return null;
+    }
+
+    private void retry(ArrayList<InputChunk> result, Reddit red, Link link, int retryCount) {
+        try {
+            RedditThread redditThread = red.getRedditThread("https://www.reddit.com" + link.getPermalink(), Sorting.NEW);
+            redditThread.fetchMoreComments(true);
+            List<Comment> comments = redditThread.getFlatComments();
+            for (Comment comment : comments) {
+                result.add(InputChunk.builder()
+                        .text(comment.getBody())
+                        .utcPostDate(new Date(comment.getCreatedUtc() * 1000))
+                        .source(getClass().getSimpleName() + " " + subredditName)
+                        .build());
+            }
+
+        } catch (Exception e) {
+            if (retryCount >= 0) {
+                log.error("stopped trying exception", e);
+                throw new RuntimeException("Exception", e);
+            } else {
+                log.warn("exception, will retry times " + --retryCount, e);
+                retry(result, red, link, retryCount);
+            }
+        }
     }
 }

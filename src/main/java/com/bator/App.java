@@ -65,7 +65,7 @@ public class App {
             redditInput.setSubredditName(subredditName);
             //redditInput.setItemCount(8); //for testing, remove for real use
 
-            executor.submit(() -> inputChunks.addAll(redditInput.gather()));
+            executor.submit(() -> inputChunks.addAll(redditInput.gather(5)));
         }
 
         executor.shutdown();

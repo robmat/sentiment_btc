@@ -24,7 +24,7 @@ public class RedditInputTest {
 
     @Test
     public void gather() {
-        List<InputChunk> result = redditInput.gather();
+        List<InputChunk> result = redditInput.gather(1);
 
         result.forEach(chunk -> {
             log.debug(chunk);
