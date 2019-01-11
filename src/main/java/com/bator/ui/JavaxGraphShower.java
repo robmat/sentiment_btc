@@ -27,7 +27,7 @@ public class JavaxGraphShower extends Application {
     private String chunksDb = "chunks";
     private String chunksTable = "chunks";
 
-    static final int DAYS_BEFORE = -1;
+    static final int DAYS_BEFORE = -2;
     static final String REPORT_SQL =
             "select count(  hash) cnt, avg(score) score, avg(magnitude) magnitude, avg(score*magnitude) score_magnitude, "
                     + "strftime('%Y-%m-%d %H:00', (creationDate / 1000), 'unixepoch', 'utc') post_time, "
@@ -108,7 +108,7 @@ public class JavaxGraphShower extends Application {
         return finalSql;
     }
 
-    static ScrollPane getScrollPane(Stage stage) {
+    private static ScrollPane getScrollPane(Stage stage) {
         stage.setTitle("Graph.");
         final ScrollPane scrollPane = new ScrollPane();
 

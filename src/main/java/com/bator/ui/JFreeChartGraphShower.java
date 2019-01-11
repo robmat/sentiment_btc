@@ -11,15 +11,15 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-import javafx.application.Application;
-import javafx.scene.control.ScrollPane;
-import javafx.stage.Stage;
 import org.apache.log4j.Logger;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.DateTickUnit;
+import org.jfree.chart.axis.DateTickUnitType;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.axis.PeriodAxis;
 import org.jfree.chart.axis.StandardTickUnitSource;
+import org.jfree.chart.axis.TickUnit;
 import org.jfree.chart.axis.TickUnitSource;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYSplineRenderer;
@@ -28,7 +28,6 @@ import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
 
 import static com.bator.ui.JavaxGraphShower.finalSql;
-import static com.bator.ui.JavaxGraphShower.getScrollPane;
 
 public class JFreeChartGraphShower  {
 
@@ -86,6 +85,9 @@ public class JFreeChartGraphShower  {
         plot.setRangeAxis(0, new NumberAxis("Count"));
         plot.setRangeAxis(1, new NumberAxis("Score"));
         PeriodAxis periodAxis = new PeriodAxis("Time");
+        // periodAxis.setStandardTickUnits(new HourlyTickUnitSource());
+        periodAxis.setVerticalTickLabels(true);
+        periodAxis.setTickLabelsVisible(true);
         plot.setDomainAxis(periodAxis);
 
         //Map the data to the appropriate axis
@@ -118,5 +120,22 @@ public class JFreeChartGraphShower  {
                 calendar.get(Calendar.MONTH) + 1,
                 calendar.get(Calendar.YEAR)
         );
+    }
+
+    static class HourlyTickUnitSource implements  TickUnitSource {
+        @Override
+        public TickUnit getLargerTickUnit(TickUnit unit) {
+            return new DateTickUnit(DateTickUnitType.HOUR, 1);
+        }
+
+        @Override
+        public TickUnit getCeilingTickUnit(TickUnit unit) {
+            return new DateTickUnit(DateTickUnitType.HOUR, 1);
+        }
+
+        @Override
+        public TickUnit getCeilingTickUnit(double size) {
+            return new DateTickUnit(DateTickUnitType.HOUR, 1);
+        }
     }
 }
