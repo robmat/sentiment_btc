@@ -73,7 +73,7 @@ public class RedditInput implements Input {
                 log.error(subredditName + " stopped trying exception", e);
                 throw new RuntimeException("Exception", e);
             } else {
-                log.warn(subredditName + " exception, will retry times " + --retryCount, e);
+                log.warn(subredditName + " exception, will retry times " + --retryCount + " " + e);
                 retry(result, red, link, retryCount);
             }
         }
