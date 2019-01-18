@@ -15,6 +15,7 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.chart.XYChart.Data;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.log4j.Logger;
@@ -27,7 +28,7 @@ public class JavaxGraphShower extends Application {
     private String chunksDb = "chunks";
     private String chunksTable = "chunks";
 
-    static final int DAYS_BEFORE = -2;
+    static final int DAYS_BEFORE = -7;
     static final String REPORT_SQL =
             "select count(  hash) cnt, avg(score) score, avg(magnitude) magnitude, avg(score*magnitude) score_magnitude, "
                     + "strftime('%Y-%m-%d %H:00', (creationDate / 1000), 'unixepoch', 'utc') post_time, "
@@ -53,14 +54,9 @@ public class JavaxGraphShower extends Application {
              Statement statement = connection.createStatement();
              ResultSet rs = statement.executeQuery(finalSql)) {
 
-            //defining the axes
-            final CategoryAxis xAxis = new CategoryAxis();
-            final NumberAxis yAxis = new NumberAxis();
-            xAxis.setLabel("Sentiment.");
-            //creating the chart
-            final LineChart<String, Number> lineChart = new LineChart<>(xAxis, yAxis);
-
-            lineChart.setTitle("Sentiment.");
+            final LineChart<String, Number> sentimentChart = createChart("Score.");
+            final LineChart<String, Number> countChart = createChart("Text count.");
+            final LineChart<String, Number> magnitudeChart = createChart("Score * magnitude.");
 
             XYChart.Series<String, Number> seriesScore = new XYChart.Series<>();
             seriesScore.setName("Score.");
@@ -90,14 +86,30 @@ public class JavaxGraphShower extends Application {
                 }
             }
 
-            //lineChart.getData().add(seriesCnt);
-            lineChart.getData().add(seriesScore);
-            lineChart.getData().add(seriesScoreMagnitude);
+            countChart.getData().add(seriesCnt);
+            sentimentChart.getData().add(seriesScore);
+            magnitudeChart.getData().add(seriesScoreMagnitude);
 
-            scrollPane.setContent(lineChart);
-            lineChart.setPrefWidth(1600);
-            lineChart.setPrefHeight(800);
+            GridPane graphs = new GridPane();
+            graphs.add(sentimentChart, 0, 0);
+            graphs.add(countChart, 0, 1);
+            graphs.add(magnitudeChart, 0, 2);
+            scrollPane.setContent(graphs);
+            sentimentChart.setPrefWidth(1600);
+            sentimentChart.setPrefHeight(800);
         }
+    }
+
+    private LineChart<String, Number> createChart(String title) {
+        //defining the axes
+        final CategoryAxis xAxis = new CategoryAxis();
+        final NumberAxis yAxis = new NumberAxis();
+        xAxis.setLabel(title);
+        //creating the chart
+        final LineChart<String, Number> sentimentChart = new LineChart<>(xAxis, yAxis);
+
+        sentimentChart.setTitle(title);
+        return sentimentChart;
     }
 
     static String finalSql(String chunksTable) {
