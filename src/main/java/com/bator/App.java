@@ -12,6 +12,7 @@ import com.bator.db.ChunkInserter;
 import com.bator.db.DataCutter;
 import com.bator.input.InputChunk;
 import com.bator.input.RedditInput;
+import com.bator.input.TwitterInput;
 import com.bator.service.AddSentimentService;
 import com.bator.ui.JavaxGraphShower;
 import lombok.Data;
@@ -24,7 +25,7 @@ public class App {
 
     private ChunkInserter chunkInserter = new ChunkInserter();
 
-    private ExecutorService executor = Executors.newFixedThreadPool(subreddits.length);
+    private ExecutorService executor = Executors.newFixedThreadPool(subreddits.length + 1);
 
     private AddSentimentService addSentimentService = new AddSentimentService();
 
@@ -67,6 +68,8 @@ public class App {
 
             executor.submit(() -> inputChunks.addAll(redditInput.gather(5)));
         }
+
+        executor.submit(() -> inputChunks.addAll(new TwitterInput().gather(5)));
 
         executor.shutdown();
         executor.awaitTermination(60, TimeUnit.MINUTES);
