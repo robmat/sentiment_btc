@@ -7,7 +7,7 @@ import static org.junit.Assert.*;
 
 public class StanfordNlpSentimentTest {
 
-    StanfordNlpSentiment stanfordNlpSentiment = new StanfordNlpSentiment();
+    private StanfordNlpSentiment stanfordNlpSentiment = new StanfordNlpSentiment();
 
     @Test
     public void findPositiveSentiment() {
