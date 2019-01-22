@@ -12,17 +12,17 @@ import edu.stanford.nlp.sentiment.SentimentCoreAnnotations;
 import edu.stanford.nlp.trees.Tree;
 import edu.stanford.nlp.util.CoreMap;
 
-public class StanfordNlpSentiment {
+class StanfordNlpSentiment {
 
-    StanfordCoreNLP pipeline;
+    private StanfordCoreNLP pipeline;
 
-    public StanfordNlpSentiment() {
+    StanfordNlpSentiment() {
         Properties props = new Properties();
         props.setProperty("annotators", "tokenize, ssplit, parse, sentiment");
         pipeline = new StanfordCoreNLP(props);
     }
 
-    public InputChunk findSentiment(InputChunk inputChunk) {
+    void findSentiment(InputChunk inputChunk) {
         int mainSentiment = 0;
         if (inputChunk != null && inputChunk.getText().length() > 0) {
             int longest = 0;
@@ -40,7 +40,6 @@ public class StanfordNlpSentiment {
             inputChunk.setScore(BigDecimal.valueOf(mainSentiment));
             inputChunk.setMagnitude(BigDecimal.ONE);
         }
-        return inputChunk;
 
     }
 }
