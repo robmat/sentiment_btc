@@ -78,6 +78,7 @@ public class ChunkInserter {
                     "source TEXT," +
                     "creationDate DATETIME," +
                     "score REAL," +
+                    "score_stanford REAL," +
                     "magnitude REAL" +
                     ")");
             statement.executeUpdate("CREATE UNIQUE INDEX IF NOT EXISTS ux_hash_" + chunksTable + " ON " + chunksTable + "(hash)");

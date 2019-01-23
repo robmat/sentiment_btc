@@ -48,6 +48,9 @@ public class App {
             if (Arrays.asList(args).contains("-addSentiment")) {
                 addSentimentService.addSentimentToChunksWithout();
             }
+            if (Arrays.asList(args).contains("-addStanfordSentiment")) {
+                addSentimentService.addStanfordSentimentToChunksWithout();
+            }
             if (Arrays.asList(args).contains("-showGraph")) {
                 showGraph();
             }

@@ -1,6 +1,7 @@
 package com.bator.service;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -16,6 +17,7 @@ import java.util.concurrent.TimeUnit;
 import com.bator.google.SentimentApi;
 import com.bator.google.SentimentApi.DocumentSentiment;
 import com.bator.input.InputChunk;
+import com.bator.sentiment.StanfordNlpSentiment;
 import lombok.Data;
 import org.apache.log4j.Logger;
 
@@ -28,6 +30,7 @@ public class AddSentimentService {
     int batchSize = 100;
     private ExecutorService executor = Executors.newFixedThreadPool(1);
     private SentimentApi sentimentApi = new SentimentApi();
+    private StanfordNlpSentiment stanfordNlpSentiment = new StanfordNlpSentiment();
     private int chunksCount;
     private int chunksUpdated;
 
@@ -105,5 +108,34 @@ public class AddSentimentService {
             }
         };
         executor.submit(runnable);
+    }
+
+    public void addStanfordSentimentToChunksWithout() {
+        try (Connection connection = DriverManager.getConnection("jdbc:sqlite:" + chunksDb + ".db");
+             Statement statement = connection.createStatement();
+             ResultSet resultSet = statement.executeQuery("SELECT body, score, hash FROM " + chunksTable +
+                     " WHERE score_stanford IS NULL ORDER BY creationDate ASC")) {
+            List<InputChunk> inputChunks = new ArrayList<>();
+            while (resultSet.next()) {
+                String body = resultSet.getString(1);
+                BigDecimal score = resultSet.getBigDecimal(2);
+                int hash = resultSet.getInt(3);
+
+                InputChunk inputChunk = InputChunk.builder().text(body).hashCode(hash).score(score).build();
+
+                inputChunks.add(inputChunk);
+            }
+
+            for (InputChunk inputChunk : inputChunks) {
+                stanfordNlpSentiment.findSentiment(inputChunk);
+
+                int updates = statement.executeUpdate("UPDATE " + chunksTable + " SET score_stanford = " + inputChunk.getScoreStanford() + " WHERE hash = " + inputChunk.getHashCode());
+
+                log.debug("body: " + inputChunk.getText());
+                log.debug("score: " + inputChunk.getScore() + " stanford score: " + inputChunk.getScoreStanford() + " updates: " + updates);
+            }
+        } catch (Exception e ) {
+            throw new RuntimeException("exception", e);
+        }
     }
 }

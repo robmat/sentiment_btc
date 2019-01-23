@@ -19,5 +19,6 @@ public class InputChunk {
     private Date utcPostDate;
     private String source;
     private BigDecimal score;
+    private BigDecimal scoreStanford;
     private BigDecimal magnitude;
 }

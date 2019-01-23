@@ -16,6 +16,7 @@ import com.bator.google.SentimentApi;
 import com.bator.google.SentimentApi.AnalyzeSentimentResponse;
 import com.bator.google.SentimentApi.DocumentSentiment;
 import com.bator.input.InputChunk;
+import com.bator.sentiment.StanfordNlpSentiment;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -23,9 +24,13 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Matchers;
 import org.mockito.Mock;
+import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.stubbing.Answer;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -36,6 +41,9 @@ public class AddSentimentServiceTest {
 
     @Mock
     SentimentApi sentimentApi;
+
+    @Mock
+    StanfordNlpSentiment stanfordNlpSentiment;
 
     @Before
     public void setUp() throws Exception {
@@ -64,6 +72,23 @@ public class AddSentimentServiceTest {
 
         Connection connection = DriverManager.getConnection("jdbc:sqlite:testChunks.db");
         ResultSet rs = connection.createStatement().executeQuery("SELECT COUNT(*) FROM testChunks WHERE score = 1 AND magnitude = 10");
+        rs.next();
+        assertEquals(1, rs.getInt(1));
+        rs.close();
+        connection.close();
+    }
+
+    @Test
+    public void addStanfordSentimentToChunksWithout() throws SQLException {
+        doAnswer(invocationOnMock -> {
+            invocationOnMock.getArgumentAt(0, InputChunk.class).setScoreStanford(BigDecimal.ONE);
+            return null;
+        }).when(stanfordNlpSentiment).findSentiment(any(InputChunk.class));
+
+        addSentimentService.addStanfordSentimentToChunksWithout();
+
+        Connection connection = DriverManager.getConnection("jdbc:sqlite:testChunks.db");
+        ResultSet rs = connection.createStatement().executeQuery("SELECT COUNT(*) FROM testChunks WHERE score_stanford = 1");
         rs.next();
         assertEquals(1, rs.getInt(1));
         rs.close();
